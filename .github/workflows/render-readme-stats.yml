@@ -1,0 +1,26 @@
+name: Generate GitHub Stats Locally
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *' # Every 6 hours
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Generate Stats SVG
+      run: |
+        curl -o stats.svg "https://github-readme-stats.vercel.app/api?username=roaring-lion-33&count_private=true&show_icons=true&theme=dark"
+      
+    - name: Commit Stats
+      run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git add stats.svg
+        git commit -m "Update GitHub stats" || echo "No changes to commit"
+        git push
